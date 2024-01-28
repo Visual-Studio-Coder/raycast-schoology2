@@ -5,7 +5,11 @@
   "description": "View your courselists, grades, graphs, and individual assignments quickly using Raycast.",
   "icon": "command-icon.png",
   "author": "Vaibhav-Satishkumar",
-  "owner": "eloncrust",
+  "contributors": [
+    "giantsquidgamer",
+    "akshay_mahajan",
+    "air-rn"
+  ],
   "categories": [
     "Other",
     "Productivity"
