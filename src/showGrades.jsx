@@ -604,20 +604,20 @@ function CourseDetail({ sectionID, courseTitle, profileUrl }) {
   let totalWeights = 0;
 
   categories.forEach((category) => {
-    const categoryGrades = grades.filter((grade) => grade.category_id === category.id && grade.exception !== 1);
-    const categoryPoints = categoryGrades.reduce((total, grade) => total + grade.grade, 0);
-    const categoryMaxPoints = categoryGrades.reduce((total, grade) => total + grade.max_points, 0);
-    const categoryWeight = category.weight ? category.weight / 100 : 1 / categories.length;
+      const categoryGrades = grades.filter((grade) => grade.category_id === category.id && grade.exception !== 1 && grade.grade !== null);
+      const categoryPoints = categoryGrades.reduce((total, grade) => total + grade.grade, 0);
+      const categoryMaxPoints = categoryGrades.reduce((total, grade) => total + grade.max_points, 0);
+      const categoryWeight = category.weight ? category.weight / 100 : 1 / categories.length;
 
-    if (categoryMaxPoints > 0) {
-      const categoryGrade = categoryPoints / categoryMaxPoints; // Calculate the grade for the category
-      overallGrade += categoryGrade * categoryWeight; // Add the weighted grade to the overall grade
-      totalWeights += categoryWeight; // Add the weight to the total weights
-    }
+      if (categoryMaxPoints > 0) {
+        const categoryGrade = categoryPoints / categoryMaxPoints; // Calculate the grade for the category
+        overallGrade += categoryGrade * categoryWeight; // Add the weighted grade to the overall grade
+        totalWeights += categoryWeight; // Add the weight to the total weights
+      }
 
-    // Update totalPoints and totalMaxPoints without weighting
-    totalPoints += categoryPoints;
-    totalMaxPoints += categoryMaxPoints;
+      // Update totalPoints and totalMaxPoints without weighting
+      totalPoints += categoryPoints;
+      totalMaxPoints += categoryMaxPoints;
   });
 
   overallGrade = totalWeights > 0 ? overallGrade / totalWeights : 0; // Calculate the overall grade
@@ -638,7 +638,7 @@ function CourseDetail({ sectionID, courseTitle, profileUrl }) {
                 icon={Icon.LineChart}
                 target={
                   <Detail
-                    markdown={`![](${getChartUrl(grades, categories)})\n⚠️Graph may be innaccurate`}
+                    markdown={`![](${getChartUrl(grades, categories)})\n⚠️Graph may be inaccurate`}
                     navigationTitle={`Graph for ${courseTitle}`}
                     actions={
                       <ActionPanel>
@@ -675,10 +675,10 @@ function CourseDetail({ sectionID, courseTitle, profileUrl }) {
       )}
       {categories.map((category, index) => {
         const categoryGrades = grades
-          .filter((grade) => grade.category_id === category.id && grade.exception !== 1)
+          .filter((grade) => grade.category_id === category.id)
           .sort((b, a) => a.timestamp - b.timestamp); // Sort grades by timestamp
-        const categoryTotalPoints = categoryGrades.reduce((total, grade) => total + grade.grade, 0);
-        const categoryTotalMaxPoints = categoryGrades.reduce((total, grade) => total + grade.max_points, 0);
+        const categoryTotalPoints = categoryGrades.reduce((total, grade) => grade.exception !== 1 ? total + grade.grade : total, 0);
+        const categoryTotalMaxPoints = categoryGrades.reduce((total, grade) => grade.exception !== 1 ? total + grade.max_points : total, 0);
         return (
           <List.Section
             key={index}
@@ -732,7 +732,7 @@ function CourseDetail({ sectionID, courseTitle, profileUrl }) {
                           },
                           {
                             tag: {
-                              value: `${grade.grade}/${grade.max_points || 0}`,
+                              value: `${grade.grade !== null ? `${grade.grade}/${grade.max_points || 0}` : 'NA'}`,
                               color: Color.PrimaryText,
                             },
                           },
